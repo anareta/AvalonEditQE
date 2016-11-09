@@ -54,7 +54,7 @@ namespace ICSharpCode.AvalonEdit.Search
 		/// </summary>
 		public static readonly DependencyProperty UseRegexProperty =
 			DependencyProperty.Register("UseRegex", typeof(bool), typeof(SearchPanel),
-			                            new FrameworkPropertyMetadata(false, SearchPatternChangedCallback));
+										new FrameworkPropertyMetadata(false, SearchPatternChangedCallback));
 		
 		/// <summary>
 		/// Gets/sets whether the search pattern should be interpreted as regular expression.
@@ -69,7 +69,7 @@ namespace ICSharpCode.AvalonEdit.Search
 		/// </summary>
 		public static readonly DependencyProperty MatchCaseProperty =
 			DependencyProperty.Register("MatchCase", typeof(bool), typeof(SearchPanel),
-			                            new FrameworkPropertyMetadata(false, SearchPatternChangedCallback));
+										new FrameworkPropertyMetadata(false, SearchPatternChangedCallback));
 		
 		/// <summary>
 		/// Gets/sets whether the search pattern should be interpreted case-sensitive.
@@ -84,7 +84,7 @@ namespace ICSharpCode.AvalonEdit.Search
 		/// </summary>
 		public static readonly DependencyProperty WholeWordsProperty =
 			DependencyProperty.Register("WholeWords", typeof(bool), typeof(SearchPanel),
-			                            new FrameworkPropertyMetadata(false, SearchPatternChangedCallback));
+										new FrameworkPropertyMetadata(false, SearchPatternChangedCallback));
 		
 		/// <summary>
 		/// Gets/sets whether the search pattern should only match whole words.
@@ -99,7 +99,7 @@ namespace ICSharpCode.AvalonEdit.Search
 		/// </summary>
 		public static readonly DependencyProperty SearchPatternProperty =
 			DependencyProperty.Register("SearchPattern", typeof(string), typeof(SearchPanel),
-			                            new FrameworkPropertyMetadata("", SearchPatternChangedCallback));
+										new FrameworkPropertyMetadata("", SearchPatternChangedCallback));
 		
 		/// <summary>
 		/// Gets/sets the search pattern.
@@ -114,7 +114,7 @@ namespace ICSharpCode.AvalonEdit.Search
 		/// </summary>
 		public static readonly DependencyProperty MarkerBrushProperty =
 			DependencyProperty.Register("MarkerBrush", typeof(Brush), typeof(SearchPanel),
-			                            new FrameworkPropertyMetadata(Brushes.LightGreen, MarkerBrushChangedCallback));
+										new FrameworkPropertyMetadata(Brushes.LightGreen, MarkerBrushChangedCallback));
 		
 		/// <summary>
 		/// Gets/sets the Brush used for marking search results in the TextView.
@@ -129,7 +129,7 @@ namespace ICSharpCode.AvalonEdit.Search
 		/// </summary>
 		public static readonly DependencyProperty LocalizationProperty =
 			DependencyProperty.Register("Localization", typeof(Localization), typeof(SearchPanel),
-			                            new FrameworkPropertyMetadata(new Localization()));
+										new FrameworkPropertyMetadata(new Localization()));
 		
 		/// <summary>
 		/// Gets/sets the localization for the SearchPanel.
@@ -232,7 +232,11 @@ namespace ICSharpCode.AvalonEdit.Search
 		/// </summary>
 		public void Uninstall()
 		{
-			CloseAndRemove();
+			//CloseAndRemove();
+			Close();
+			textArea.DocumentChanged -= textArea_DocumentChanged;
+			if (currentDocument != null)
+				currentDocument.TextChanged -= textArea_Document_TextChanged;
 			textArea.DefaultInputHandler.NestedInputHandlers.Remove(handler);
 		}
 		
@@ -421,17 +425,17 @@ namespace ICSharpCode.AvalonEdit.Search
 			renderer.CurrentResults.Clear();
 		}
 		
-		/// <summary>
-		/// Closes the SearchPanel and removes it.
-		/// </summary>
-		[Obsolete("Use the Uninstall method instead!")]
-		public void CloseAndRemove()
-		{
-			Close();
-			textArea.DocumentChanged -= textArea_DocumentChanged;
-			if (currentDocument != null)
-				currentDocument.TextChanged -= textArea_Document_TextChanged;
-		}
+		///// <summary>
+		///// Closes the SearchPanel and removes it.
+		///// </summary>
+		//[Obsolete("Use the Uninstall method instead!")]
+		//public void CloseAndRemove()
+		//{
+		//	Close();
+		//	textArea.DocumentChanged -= textArea_DocumentChanged;
+		//	if (currentDocument != null)
+		//		currentDocument.TextChanged -= textArea_Document_TextChanged;
+		//}
 		
 		/// <summary>
 		/// Opens the an existing search panel.
