@@ -83,11 +83,21 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		/// <param name="action">Action that changes an individual <see cref="VisualLineElement"/>.</param>
 		protected void ChangeLinePart(int startOffset, int endOffset, Action<VisualLineElement> action)
 		{
-			if (startOffset < currentDocumentLineStartOffset || startOffset > currentDocumentLineEndOffset)
-				throw new ArgumentOutOfRangeException("startOffset", startOffset, "Value must be between " + currentDocumentLineStartOffset + " and " + currentDocumentLineEndOffset);
-			if (endOffset < startOffset || endOffset > currentDocumentLineEndOffset)
-				throw new ArgumentOutOfRangeException("endOffset", endOffset, "Value must be between " + startOffset + " and " + currentDocumentLineEndOffset);
-			VisualLine vl = this.CurrentContext.VisualLine;
+            if (startOffset < currentDocumentLineStartOffset || startOffset > currentDocumentLineEndOffset)
+            {
+                /* Az Add Start */
+                return;
+                /* Az Add End    */
+                //throw new ArgumentOutOfRangeException("startOffset", startOffset, "Value must be between " + currentDocumentLineStartOffset + " and " + currentDocumentLineEndOffset);
+            }
+            if (endOffset < startOffset || endOffset > currentDocumentLineEndOffset)
+            {
+                /* Az Add Start */
+                return;
+                /* Az Add End   */
+                //throw new ArgumentOutOfRangeException("endOffset", endOffset, "Value must be between " + startOffset + " and " + currentDocumentLineEndOffset);
+            }
+            VisualLine vl = this.CurrentContext.VisualLine;
 			int visualStart = vl.GetVisualColumn(startOffset - firstLineStart);
 			int visualEnd = vl.GetVisualColumn(endOffset - firstLineStart);
 			if (visualStart < visualEnd) {

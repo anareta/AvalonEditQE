@@ -92,8 +92,10 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			
 			var linePosY = visualLine.VisualTop - this.textView.ScrollOffset.Y;
 			
-			builder.AddRectangle(textView, new Rect(0, linePosY, textView.ActualWidth, visualLine.Height));
-			
+            /* Az Add Start 入力中の行のハイライト */
+			builder.AddRectangle(textView, new Rect(0, linePosY, textView.ActualWidth, visualLine.Height - visualLine.LineHeight));
+			/* Az Add End */
+
 			Geometry geometry = builder.CreateGeometry();
 			if (geometry != null) {
 				drawingContext.DrawGeometry(this.BackgroundBrush, this.BorderPen, geometry);

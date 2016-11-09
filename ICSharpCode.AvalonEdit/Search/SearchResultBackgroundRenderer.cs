@@ -82,7 +82,7 @@ namespace ICSharpCode.AvalonEdit.Search
 				BackgroundGeometryBuilder geoBuilder = new BackgroundGeometryBuilder();
 				geoBuilder.AlignToWholePixels = true;
 				geoBuilder.BorderThickness = markerPen != null ? markerPen.Thickness : 0;
-				geoBuilder.CornerRadius = 3;
+                geoBuilder.CornerRadius = 3;
 				geoBuilder.AddSegment(textView, result);
 				Geometry geometry = geoBuilder.CreateGeometry();
 				if (geometry != null) {

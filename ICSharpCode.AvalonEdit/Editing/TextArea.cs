@@ -496,7 +496,9 @@ namespace ICSharpCode.AvalonEdit.Editing
 		/// </summary>
 		public static readonly DependencyProperty SelectionCornerRadiusProperty =
 			DependencyProperty.Register("SelectionCornerRadius", typeof(double), typeof(TextArea),
-			                            new FrameworkPropertyMetadata(3.0));
+        /* Az Add Start */
+			                            new FrameworkPropertyMetadata(0d));
+        /* Az Add End   */
 		
 		/// <summary>
 		/// Gets/Sets the corner radius of the selection.

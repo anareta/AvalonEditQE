@@ -50,9 +50,9 @@ namespace ICSharpCode.AvalonEdit
 		static TextEditor()
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(TextEditor),
-			                                         new FrameworkPropertyMetadata(typeof(TextEditor)));
+													 new FrameworkPropertyMetadata(typeof(TextEditor)));
 			FocusableProperty.OverrideMetadata(typeof(TextEditor),
-			                                   new FrameworkPropertyMetadata(Boxes.True));
+											   new FrameworkPropertyMetadata(Boxes.True));
 		}
 		
 		/// <summary>
@@ -154,7 +154,39 @@ namespace ICSharpCode.AvalonEdit
 			OnTextChanged(EventArgs.Empty);
 		}
 		#endregion
-		
+
+		/* Az Add Start */
+		#region LineHeight property
+		/// <summary>
+		/// LineHeight dependency property.
+		/// </summary>
+		public static readonly DependencyProperty LineHeightProperty =
+			DependencyProperty.Register("LineHeight", typeof(double), typeof(TextEditor),
+										new FrameworkPropertyMetadata(double.NaN, OnLineHeightChanged));
+
+		/// <summary>
+		/// LineHeight of the Text Box
+		/// </summary>
+		public double LineHeight
+		{
+			get { return (double)GetValue(LineHeightProperty); }
+			set
+			{ 
+				SetValue(LineHeightProperty, value);
+			}
+		}
+
+		static void OnLineHeightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			TextEditor editor = d as TextEditor;
+			if (editor != null)
+			{
+				editor.TextArea.TextView.LineHeight = (double)e.NewValue;
+			}
+		}
+		#endregion
+		/* Az Add End   */
+
 		#region Options property
 		/// <summary>
 		/// Options property.
@@ -320,7 +352,7 @@ namespace ICSharpCode.AvalonEdit
 		/// </summary>
 		public static readonly DependencyProperty SyntaxHighlightingProperty =
 			DependencyProperty.Register("SyntaxHighlighting", typeof(IHighlightingDefinition), typeof(TextEditor),
-			                            new FrameworkPropertyMetadata(OnSyntaxHighlightingChanged));
+										new FrameworkPropertyMetadata(OnSyntaxHighlightingChanged));
 		
 		
 		/// <summary>
@@ -370,7 +402,7 @@ namespace ICSharpCode.AvalonEdit
 		/// </summary>
 		public static readonly DependencyProperty WordWrapProperty =
 			DependencyProperty.Register("WordWrap", typeof(bool), typeof(TextEditor),
-			                            new FrameworkPropertyMetadata(Boxes.False));
+										new FrameworkPropertyMetadata(Boxes.False));
 		
 		/// <summary>
 		/// Specifies whether the text editor uses word wrapping.
@@ -391,7 +423,7 @@ namespace ICSharpCode.AvalonEdit
 		/// </summary>
 		public static readonly DependencyProperty IsReadOnlyProperty =
 			DependencyProperty.Register("IsReadOnly", typeof(bool), typeof(TextEditor),
-			                            new FrameworkPropertyMetadata(Boxes.False, OnIsReadOnlyChanged));
+										new FrameworkPropertyMetadata(Boxes.False, OnIsReadOnlyChanged));
 		
 		/// <summary>
 		/// Specifies whether the user can change the text editor content.
@@ -426,7 +458,7 @@ namespace ICSharpCode.AvalonEdit
 		/// </summary>
 		public static readonly DependencyProperty IsModifiedProperty =
 			DependencyProperty.Register("IsModified", typeof(bool), typeof(TextEditor),
-			                            new FrameworkPropertyMetadata(Boxes.False, OnIsModifiedChanged));
+										new FrameworkPropertyMetadata(Boxes.False, OnIsModifiedChanged));
 		
 		/// <summary>
 		/// Gets/Sets the 'modified' flag.
@@ -473,7 +505,7 @@ namespace ICSharpCode.AvalonEdit
 		/// </summary>
 		public static readonly DependencyProperty ShowLineNumbersProperty =
 			DependencyProperty.Register("ShowLineNumbers", typeof(bool), typeof(TextEditor),
-			                            new FrameworkPropertyMetadata(Boxes.False, OnShowLineNumbersChanged));
+										new FrameworkPropertyMetadata(Boxes.False, OnShowLineNumbersChanged));
 		
 		/// <summary>
 		/// Specifies whether line numbers are shown on the left to the text view.
@@ -515,7 +547,7 @@ namespace ICSharpCode.AvalonEdit
 		/// </summary>
 		public static readonly DependencyProperty LineNumbersForegroundProperty =
 			DependencyProperty.Register("LineNumbersForeground", typeof(Brush), typeof(TextEditor),
-			                            new FrameworkPropertyMetadata(Brushes.Gray, OnLineNumbersForegroundChanged));
+										new FrameworkPropertyMetadata(Brushes.Gray, OnLineNumbersForegroundChanged));
 		
 		/// <summary>
 		/// Gets/sets the Brush used for displaying the foreground color of line numbers.
@@ -1136,7 +1168,7 @@ namespace ICSharpCode.AvalonEdit
 		{
 			ScrollTo(line, -1);
 		}
-		
+
 		/// <summary>
 		/// Scrolls to the specified line/column.
 		/// This method requires that the TextEditor was already assigned a size (WPF layout must have run prior).
@@ -1165,7 +1197,9 @@ namespace ICSharpCode.AvalonEdit
 						if (prevLine == null)
 							break;
 						vl = textView.GetOrConstructVisualLine(prevLine);
-						remainingHeight -= vl.Height;
+						/* Az Add Start スクロールバーの判定 */
+						remainingHeight -= (vl.Height);
+						/* Az Add Start */
 					}
 				}
 				

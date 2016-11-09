@@ -114,7 +114,14 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		/// Gets the height of the visual line in device-independent pixels.
 		/// </summary>
 		public double Height { get; private set; }
-		
+
+        /* Az Add Start */
+        /// <summary>
+        /// Gets the line height of the visual line in device-independent pixels.
+        /// </summary>
+        public double LineHeight { get; private set; }
+        /* Az Add End   */
+
 		/// <summary>
 		/// Gets the Y position of the line. This is measured in device-independent pixels relative to the start of the document.
 		/// </summary>
@@ -127,6 +134,9 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			this.textView = textView;
 			this.Document = textView.Document;
 			this.FirstDocumentLine = firstDocumentLine;
+            /* Az Add Start */
+            this.LineHeight = textView.LineHeight;
+            /* Az Add End   */
 		}
 		
 		internal void ConstructVisualElements(ITextRunConstructionContext context, VisualLineElementGenerator[] generators)
@@ -281,7 +291,11 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			this.textLines = textLines.AsReadOnly();
 			Height = 0;
 			foreach (TextLine line in textLines)
-				Height += line.Height;
+            { 
+                /* Az Add Start */
+                Height += line.Height + this.LineHeight;
+                /* Az Add End */
+            }
 		}
 		
 		/// <summary>
@@ -360,9 +374,9 @@ namespace ICSharpCode.AvalonEdit.Rendering
 						case VisualYPosition.LineTop:
 							return pos;
 						case VisualYPosition.LineMiddle:
-							return pos + tl.Height / 2;
+                            return pos + (tl.Height + LineHeight) / 2;  /* Az Add Start */
 						case VisualYPosition.LineBottom:
-							return pos + tl.Height;
+                            return pos + (tl.Height + LineHeight);  /* Az Add Start */
 						case VisualYPosition.TextTop:
 							return pos + tl.Baseline - textView.DefaultBaseline;
 						case VisualYPosition.TextBottom:
@@ -375,7 +389,9 @@ namespace ICSharpCode.AvalonEdit.Rendering
 							throw new ArgumentException("Invalid yPositionMode:" + yPositionMode);
 					}
 				} else {
-					pos += tl.Height;
+                    /* Az Add Start */
+					pos += tl.Height + LineHeight;
+                    /* Az Add End   */
 				}
 			}
 			throw new ArgumentException("textLine is not a line in this VisualLine");
@@ -406,7 +422,9 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			const double epsilon = 0.0001;
 			double pos = this.VisualTop;
 			foreach (TextLine tl in TextLines) {
-				pos += tl.Height;
+                /* Az Add Start */
+				pos += tl.Height + LineHeight;
+                /* Az Add End   */
 				if (visualTop + epsilon < pos)
 					return tl;
 			}
@@ -752,8 +770,11 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			var drawingContext = RenderOpen();
 			double pos = 0;
 			foreach (TextLine textLine in visualLine.TextLines) {
+                /* Az Add  Start 折り返し行単位の文字描画 */
 				textLine.Draw(drawingContext, new Point(0, pos), InvertAxes.None);
-				pos += textLine.Height;
+                // ループ回数は折り返しの文字の行数
+                pos += textLine.Height + this.VisualLine.LineHeight;
+                /* Az Add Start */
 			}
 			this.Height = pos;
 			drawingContext.Close();

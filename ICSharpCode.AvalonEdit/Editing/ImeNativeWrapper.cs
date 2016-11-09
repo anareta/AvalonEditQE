@@ -140,7 +140,17 @@ namespace ICSharpCode.AvalonEdit.Editing
 			Rect textViewBounds = textArea.TextView.GetBounds(source);
 			Rect characterBounds = textArea.TextView.GetCharacterBounds(textArea.Caret.Position, source);
 			CompositionForm form = new CompositionForm();
-			form.dwStyle = 0x0020;
+            /* Az Add Start IME変換窓の位置 */
+            //form.dwStyle = 0x0020;
+            form.dwStyle = 0x0001;
+            // CFS_DEFAULT            0x0000 コンポジションウィンドウをクライアントエリアの外側に描画する
+            // CFS_RECT               0x0001 コンポジションウィンドウをクライアントエリアの指定された範囲内に描画する(rcAreaを使用する）
+            // CFS_POINT              0x0002 コンポジションウィンドウをクライアントエリアの指定された位置に描画する(ptCurrentPosを使用する)
+            // CFS_FORCE_POSITION     0x0020 コンポジションウィンドウをクライアントエリアの指定された位置に描画する(ptCurrentPosを使用する)
+            // CFS_CANDIDATEPOS       0x0040
+            // CFS_EXCLUDE            0x0080
+
+            /* Az Add End  */
 			form.ptCurrentPos.x = (int)Math.Max(characterBounds.Left, textViewBounds.Left);
 			form.ptCurrentPos.y = (int)Math.Max(characterBounds.Top, textViewBounds.Top);
 			form.rcArea.left = (int)textViewBounds.Left;

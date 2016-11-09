@@ -104,7 +104,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				throw new ArgumentNullException("textView");
 			Size pixelSize = PixelSnapHelpers.GetPixelSize(textView);
 			foreach (Rect r in GetRectsForSegment(textView, segment, ExtendToFullWidthAtLineEnd)) {
-				AddRectangle(pixelSize, r);
+                AddRectangle(pixelSize, r);
 			}
 		}
 		
@@ -247,7 +247,9 @@ namespace ICSharpCode.AvalonEdit.Rendering
 						continue;
 					if (segmentStartVCInLine == visualStartCol && i > 0 && segmentStartVC < segmentStartVCInLine && visualLine.TextLines[i - 1].TrailingWhitespaceLength == 0)
 						continue;
-					lastRect = new Rect(pos, y, textView.EmptyLineSelectionWidth, line.Height);
+                    /* Az Add Start 選択時の色の四角形を作成する */
+					yield return new Rect(pos, y, 1, line.Height);
+                    /* Az Add End   */
 				} else {
 					if (segmentStartVCInLine <= visualEndCol) {
 						foreach (TextBounds b in line.GetTextBounds(segmentStartVCInLine, segmentEndVCInLine - segmentStartVCInLine)) {
@@ -256,48 +258,31 @@ namespace ICSharpCode.AvalonEdit.Rendering
 							if (!lastRect.IsEmpty)
 								yield return lastRect;
 							// left>right is possible in RTL languages
+                            /* Az Add Start 選択時の色の四角形を作成する */
 							lastRect = new Rect(Math.Min(left, right), y, Math.Abs(right - left), line.Height);
-						}
+						    /* Az Add End   */
+                        }
 					}
-				}
-				// If the segment ends in virtual space, extend the last rectangle with the rectangle the portion of the selection
-				// after the line end.
-				// Also, when word-wrap is enabled and the segment continues into the next line, extend lastRect up to the end of the line.
-				if (segmentEndVC > visualEndCol) {
-					double left, right;
-					if (segmentStartVC > visualLine.VisualLengthWithEndOfLineMarker) {
-						// segmentStartVC is in virtual space
-						left = visualLine.GetTextLineVisualXPosition(lastTextLine, segmentStartVC);
-					} else {
-						// Otherwise, we already processed the rects from segmentStartVC up to visualEndCol,
-						// so we only need to do the remainder starting at visualEndCol.
-						// For word-wrapped lines, visualEndCol doesn't include the whitespace hidden by the wrap,
-						// so we'll need to include it here.
-						// For the last line, visualEndCol already includes the whitespace.
-						left = (line == lastTextLine ? line.WidthIncludingTrailingWhitespace : line.Width);
-					}
-					if (line != lastTextLine || segmentEndVC == int.MaxValue) {
-						// If word-wrap is enabled and the segment continues into the next line,
-						// or if the extendToFullWidthAtLineEnd option is used (segmentEndVC == int.MaxValue),
-						// we select the full width of the viewport.
-						right = Math.Max(((IScrollInfo)textView).ExtentWidth, ((IScrollInfo)textView).ViewportWidth);
-					} else {
-						right = visualLine.GetTextLineVisualXPosition(lastTextLine, segmentEndVC);
-					}
-					Rect extendSelection = new Rect(Math.Min(left, right), y, Math.Abs(right - left), line.Height);
-					if (!lastRect.IsEmpty) {
-						if (extendSelection.IntersectsWith(lastRect)) {
-							lastRect.Union(extendSelection);
-							yield return lastRect;
-						} else {
+					if (segmentEndVC >= visualLine.VisualLengthWithEndOfLineMarker) {
+						double left = (segmentStartVC > visualLine.VisualLengthWithEndOfLineMarker ? visualLine.GetTextLineVisualXPosition(lastTextLine, segmentStartVC) : line.Width) - scrollOffset.X;
+						double right = ((segmentEndVC == int.MaxValue || line != lastTextLine) ? Math.Max(((IScrollInfo)textView).ExtentWidth, ((IScrollInfo)textView).ViewportWidth) : visualLine.GetTextLineVisualXPosition(lastTextLine, segmentEndVC)) - scrollOffset.X;
+                        /* Az Add Start 選択時の色の四角形を作成する */
+                        Rect extendSelection = new Rect(Math.Min(left, right), y, Math.Abs(right - left), line.Height);
+						/* Az Add End   */
+                        if (!lastRect.IsEmpty) {
+							if (extendSelection.IntersectsWith(lastRect)) {
+								lastRect.Union(extendSelection);
+								yield return lastRect;
+							} else {
 							// If the end of the line is in an RTL segment, keep lastRect and extendSelection separate.
-							yield return lastRect;
+								yield return lastRect;
+								yield return extendSelection;
+							}
+						} else
 							yield return extendSelection;
-						}
 					} else
-						yield return extendSelection;
-				} else
-					yield return lastRect;
+						yield return lastRect;
+				}
 			}
 		}
 		

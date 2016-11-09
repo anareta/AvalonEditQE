@@ -110,13 +110,16 @@ namespace ICSharpCode.AvalonEdit.Document
 		{
 			if (textSource == null)
 				throw new ArgumentNullException("textSource");
-			int pos;
-			for (pos = offset; pos < textSource.TextLength; pos++) {
-				char c = textSource.GetCharAt(pos);
-				if (c != ' ' && c != '\t')
-					break;
-			}
-			return new SimpleSegment(offset, pos - offset);
+            //int pos;
+            //for (pos = offset; pos < textSource.TextLength; pos++) {
+            //    char c = textSource.GetCharAt(pos);
+            //    /* Az Add Start インデント行の改行時に次の行もインデントする */
+            //    //if (c != ' ' && c != '\t')
+            //    /* Az Add End  */
+            //        break;
+            //}
+            //return new SimpleSegment(offset, pos - offset);
+            return new SimpleSegment(offset, 0);
 		}
 		
 		/// <summary>

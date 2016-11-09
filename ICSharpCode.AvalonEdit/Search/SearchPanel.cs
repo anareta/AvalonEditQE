@@ -218,7 +218,7 @@ namespace ICSharpCode.AvalonEdit.Search
 			textArea.DefaultInputHandler.NestedInputHandlers.Add(panel.handler);
 			return panel;
 		}
-
+		
 		/// <summary>
 		/// Adds the commands used by SearchPanel to the given CommandBindingCollection.
 		/// </summary>

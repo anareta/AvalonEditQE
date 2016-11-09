@@ -29,6 +29,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		internal double tabSize;
 		internal double indent;
 		internal bool firstLineInParagraph;
+        internal double lineHeight = double.NaN;
 		
 		public override double DefaultIncrementalTab {
 			get { return tabSize; }

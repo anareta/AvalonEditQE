@@ -383,7 +383,9 @@ namespace ICSharpCode.AvalonEdit.Editing
 			
 			TextLine textLine = visualLine.GetTextLine(position.VisualColumn, position.IsAtEndOfLine);
 			double xPos = visualLine.GetTextLineVisualXPosition(textLine, position.VisualColumn);
+            /* Az Add Start 表示されるキャレットの絵の高さ */
 			double lineTop = visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.TextTop);
+            /* Az Add End   */
 			double lineBottom = visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.TextBottom);
 			
 			return new Rect(xPos,

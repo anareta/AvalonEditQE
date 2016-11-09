@@ -71,8 +71,10 @@ namespace ICSharpCode.AvalonEdit.Editing
 			AddBinding(EditingCommands.DeletePreviousWord, ModifierKeys.Control, Key.Back, OnDelete(CaretMovementType.WordLeft));
 			AddBinding(EditingCommands.EnterParagraphBreak, ModifierKeys.None, Key.Enter, OnEnter);
 			AddBinding(EditingCommands.EnterLineBreak, ModifierKeys.Shift, Key.Enter, OnEnter);
-			AddBinding(EditingCommands.TabForward, ModifierKeys.None, Key.Tab, OnTab);
-			AddBinding(EditingCommands.TabBackward, ModifierKeys.Shift, Key.Tab, OnShiftTab);
+			/* Az Add Start Tabキーのコマンド割り当て */
+            AddBinding(EditingCommands.TabForward, ModifierKeys.None, Key.Tab, OnTab);
+            AddBinding(EditingCommands.TabBackward, ModifierKeys.Shift, Key.Tab, OnShiftTab);
+            /* Az Add End */
 			
 			CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, OnCopy, CanCutOrCopy));
 			CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, OnCut, CanCutOrCopy));
@@ -432,7 +434,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 				string text = GetTextToPaste(pastingEventArgs, textArea);
 				
 				if (!string.IsNullOrEmpty(text)) {
-					dataObject = pastingEventArgs.DataObject;
+				dataObject = pastingEventArgs.DataObject;
 					bool fullLine = textArea.Options.CutCopyWholeLine && dataObject.GetDataPresent(LineSelectedType);
 					bool rectangular = dataObject.GetDataPresent(RectangleSelection.RectangularSelectionDataType);
 					
@@ -456,30 +458,30 @@ namespace ICSharpCode.AvalonEdit.Editing
 		internal static string GetTextToPaste(DataObjectPastingEventArgs pastingEventArgs, TextArea textArea)
 		{
 			var dataObject = pastingEventArgs.DataObject;
-			if (dataObject == null)
+				if (dataObject == null)
 				return null;
 			try {
 				string text;
-				// Try retrieving the text as one of:
-				//  - the FormatToApply
-				//  - UnicodeText
-				//  - Text
-				// (but don't try the same format twice)
-				if (pastingEventArgs.FormatToApply != null && dataObject.GetDataPresent(pastingEventArgs.FormatToApply))
-					text = (string)dataObject.GetData(pastingEventArgs.FormatToApply);
-				else if (pastingEventArgs.FormatToApply != DataFormats.UnicodeText && dataObject.GetDataPresent(DataFormats.UnicodeText))
-					text = (string)dataObject.GetData(DataFormats.UnicodeText);
-				else if (pastingEventArgs.FormatToApply != DataFormats.Text && dataObject.GetDataPresent(DataFormats.Text))
-					text = (string)dataObject.GetData(DataFormats.Text);
-				else
+					// Try retrieving the text as one of:
+					//  - the FormatToApply
+					//  - UnicodeText
+					//  - Text
+					// (but don't try the same format twice)
+					if (pastingEventArgs.FormatToApply != null && dataObject.GetDataPresent(pastingEventArgs.FormatToApply))
+						text = (string)dataObject.GetData(pastingEventArgs.FormatToApply);
+					else if (pastingEventArgs.FormatToApply != DataFormats.UnicodeText && dataObject.GetDataPresent(DataFormats.UnicodeText))
+						text = (string)dataObject.GetData(DataFormats.UnicodeText);
+					else if (pastingEventArgs.FormatToApply != DataFormats.Text && dataObject.GetDataPresent(DataFormats.Text))
+						text = (string)dataObject.GetData(DataFormats.Text);
+					else
 					return null; // no text data format
 				// convert text back to correct newlines for this document
 				string newLine = TextUtilities.GetNewLineFromDocument(textArea.Document, textArea.Caret.Line);
-				text = TextUtilities.NormalizeNewLines(text, newLine);
-				text = textArea.Options.ConvertTabsToSpaces ? text.Replace("\t", new String(' ', textArea.Options.IndentationSize)) : text;
+					text = TextUtilities.NormalizeNewLines(text, newLine);
+					text = textArea.Options.ConvertTabsToSpaces ? text.Replace("\t", new String(' ', textArea.Options.IndentationSize)) : text;
 				return text;
-			} catch (OutOfMemoryException) {
-				// may happen when trying to paste a huge string
+				} catch (OutOfMemoryException) {
+					// may happen when trying to paste a huge string
 				return null;
 			}
 		}

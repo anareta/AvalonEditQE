@@ -122,6 +122,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		/// </summary>
 		protected virtual Uri GetUriFromMatch(Match match)
 		{
+            // URLの文字列か判定する
 			string targetUrl = match.Value;
 			if (targetUrl.StartsWith("www.", StringComparison.Ordinal))
 				targetUrl = "http://" + targetUrl;

@@ -189,7 +189,41 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			return ReceiveWeakEvent(managerType, sender, e);
 		}
 		#endregion
-		
+
+        /* Az Add Start */
+        #region LineHeight property
+        /// <summary>
+        /// LineHeight dependency property.
+        /// </summary>
+        public static readonly DependencyProperty LineHeightProperty =
+            DependencyProperty.Register("LineHeight", typeof(double), typeof(TextView),
+                                        new FrameworkPropertyMetadata(OnLineHeightChanged));
+
+        /// <summary>
+        /// Gets/sets whether to LineHeight of texts.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        public double LineHeight
+        {
+            get { return (double)GetValue(LineHeightProperty); }
+            set { SetValue(LineHeightProperty, value); }
+        }
+
+        static void OnLineHeightChanged(DependencyObject dp, DependencyPropertyChangedEventArgs e)
+        {
+            ((TextView)dp).OnLineHeightChanged((double)e.OldValue, (double)e.NewValue);
+        }
+
+        void OnLineHeightChanged(double oldValue, double newValue)
+        {
+            this.LineHeight = newValue;
+            this.Redraw();
+        }
+
+        #endregion
+        /* Az Add End   */
+
 		#region Options property
 		/// <summary>
 		/// Options property.
@@ -568,10 +602,11 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		
 		/// <summary>
 		/// LinkTextForegroundBrush dependency property.
+        /// リンクのテキストがあったときのブラシをここで設定する
 		/// </summary>
 		public static readonly DependencyProperty LinkTextForegroundBrushProperty =
 			DependencyProperty.Register("LinkTextForegroundBrush", typeof(Brush), typeof(TextView),
-			                            new FrameworkPropertyMetadata(Brushes.Blue));
+                                        new FrameworkPropertyMetadata(Brushes.SkyBlue));
 		
 		/// <summary>
 		/// Gets/sets the Brush used for displaying link texts.
@@ -1004,8 +1039,10 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				visualLine.VisualTop = scrollOffset.Y + yPos;
 				
 				nextLine = visualLine.LastDocumentLine.NextLine;
-				
+
+                /* Az Add Start キャレットの移動、行番号などの位置 */
 				yPos += visualLine.Height;
+                /* Az Add End   */
 				
 				foreach (TextLine textLine in visualLine.TextLines) {
 					if (textLine.WidthIncludingTrailingWhitespace > maxWidth)
@@ -1125,7 +1162,10 @@ namespace ICSharpCode.AvalonEdit.Rendering
 						// determine indentation for next line:
 						int indentVisualColumn = GetIndentationVisualColumn(visualLine);
 						if (indentVisualColumn > 0 && indentVisualColumn < textOffset) {
-							indentation = textLine.GetDistanceFromCharacterHit(new CharacterHit(indentVisualColumn, 0));
+                            /* Az Add Start */
+                            // 折り返し時の横方向インデントの取得
+							// indentation = textLine.GetDistanceFromCharacterHit(new CharacterHit(indentVisualColumn, 0));
+                            /* Az Add End   */
 						}
 					}
 					indentation += options.WordWrapIndentation;
@@ -1136,7 +1176,9 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				lastLineBreak = textLine.GetTextLineBreak();
 			}
 			visualLine.SetTextLines(textLines);
+            /* Az Add Start 画面いっぱいに文字を入力したときに自動的にスクロールされる量（一行分）*/
 			heightTree.SetHeight(visualLine.FirstDocumentLine, visualLine.Height);
+            /* Az Add End   */
 			return visualLine;
 		}
 		
@@ -1204,7 +1246,9 @@ namespace ICSharpCode.AvalonEdit.Rendering
 							}
 							offset += span.Length;
 						}
+                        /* Az Add Start 入力中の文字の大きさ、キャレットの大きさ */
 						pos.Y += textLine.Height;
+                        /* Az Add End   */
 					}
 				}
 			}
@@ -1251,7 +1295,9 @@ namespace ICSharpCode.AvalonEdit.Rendering
 							builder.AlignToWholePixels = true;
 							builder.CornerRadius = 3;
 							foreach (var rect in BackgroundGeometryBuilder.GetRectsFromVisualSegment(this, line, startVC, startVC + length))
-								builder.AddRectangle(this, rect);
+                            {
+                                builder.AddRectangle(this, rect);
+                            }
 							Geometry geometry = builder.CreateGeometry();
 							if (geometry != null) {
 								drawingContext.DrawGeometry(currentBrush, null, geometry);
@@ -1267,9 +1313,11 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				if (currentBrush != null) {
 					BackgroundGeometryBuilder builder = new BackgroundGeometryBuilder();
 					builder.AlignToWholePixels = true;
-					builder.CornerRadius = 3;
+                    builder.CornerRadius = 3;
 					foreach (var rect in BackgroundGeometryBuilder.GetRectsFromVisualSegment(this, line, startVC, startVC + length))
-						builder.AddRectangle(this, rect);
+                    {
+                        builder.AddRectangle(this, rect);
+                    }
 					Geometry geometry = builder.CreateGeometry();
 					if (geometry != null) {
 						drawingContext.DrawGeometry(currentBrush, null, geometry);
@@ -1556,12 +1604,14 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				using (var line = formatter.FormatLine(
 					new SimpleTextSource("x", textRunProperties),
 					0, 32000,
-					new VisualLineTextParagraphProperties { defaultTextRunProperties = textRunProperties },
+					new VisualLineTextParagraphProperties { defaultTextRunProperties = textRunProperties},
 					null))
 				{
 					wideSpaceWidth = Math.Max(1, line.WidthIncludingTrailingWhitespace);
 					defaultBaseline = Math.Max(1, line.Baseline);
+                    /* Az Add Start 入力中の文字の大きさ、キャレットの大きさ */
 					defaultLineHeight = Math.Max(1, line.Height);
+                    /* Az Add End   */
 				}
 			} else {
 				wideSpaceWidth = FontSize / 2;

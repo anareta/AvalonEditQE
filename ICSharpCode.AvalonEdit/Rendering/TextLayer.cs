@@ -58,6 +58,9 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			}
 			visuals.Clear();
 			foreach (VisualLine newLine in visualLines) {
+                /* Az Add Start 行単位の文字描画 */
+                // ループは行数
+                /* Az Add End   */
 				VisualLineDrawingVisual v = newLine.Render();
 				if (!v.IsAdded) {
 					AddVisualChild(v);
