@@ -1198,7 +1198,7 @@ namespace ICSharpCode.AvalonEdit
 							break;
 						vl = textView.GetOrConstructVisualLine(prevLine);
 						/* Az Add Start スクロールバーの判定 */
-						remainingHeight -= (vl.Height);
+						remainingHeight -= (vl.Height - (vl.LineHeight*2));
 						/* Az Add Start */
 					}
 				}
