@@ -222,13 +222,44 @@ namespace ICSharpCode.AvalonEdit.Rendering
         }
 
         #endregion
+
+        #region ScrollingIncrement property
+        /// <summary>
+        /// ScrollingIncrement dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ScrollingIncrementProperty =
+            DependencyProperty.Register("ScrollingIncrement", typeof(double), typeof(TextView),
+                                        new FrameworkPropertyMetadata(double.NaN, OnScrollingIncrementChanged));
+
+        /// <summary>
+        /// Gets/sets whether to ScrollingIncrement of texts.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        public double ScrollingIncrement
+        {
+            get { return (double)GetValue(ScrollingIncrementProperty); }
+            set { SetValue(ScrollingIncrementProperty, value); }
+        }
+
+        static void OnScrollingIncrementChanged(DependencyObject dp, DependencyPropertyChangedEventArgs e)
+        {
+            ((TextView)dp).OnScrollingIncrementChanged((double)e.OldValue, (double)e.NewValue);
+        }
+
+        void OnScrollingIncrementChanged(double oldValue, double newValue)
+        {
+            this.ScrollingIncrement = newValue;
+        }
+
+        #endregion
         /* Az Add End   */
 
-		#region Options property
-		/// <summary>
-		/// Options property.
-		/// </summary>
-		public static readonly DependencyProperty OptionsProperty =
+        #region Options property
+        /// <summary>
+        /// Options property.
+        /// </summary>
+        public static readonly DependencyProperty OptionsProperty =
 			DependencyProperty.Register("Options", typeof(TextEditorOptions), typeof(TextView),
 			                            new FrameworkPropertyMetadata(OnOptionsChanged));
 		
@@ -1515,15 +1546,17 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		
 		void IScrollInfo.MouseWheelUp()
 		{
-			((IScrollInfo)this).SetVerticalOffset(
-				scrollOffset.Y - (SystemParameters.WheelScrollLines * DefaultLineHeight));
+            var d = double.IsNaN(this.ScrollingIncrement) ? 1 : this.ScrollingIncrement;
+              ((IScrollInfo)this).SetVerticalOffset(
+				scrollOffset.Y - (SystemParameters.WheelScrollLines * DefaultLineHeight) * d);
 			OnScrollChange();
 		}
 		
 		void IScrollInfo.MouseWheelDown()
 		{
-			((IScrollInfo)this).SetVerticalOffset(
-				scrollOffset.Y + (SystemParameters.WheelScrollLines * DefaultLineHeight));
+            var d = double.IsNaN(this.ScrollingIncrement) ? 1 : this.ScrollingIncrement;
+            ((IScrollInfo)this).SetVerticalOffset(
+				scrollOffset.Y + (SystemParameters.WheelScrollLines * DefaultLineHeight) * d);
 			OnScrollChange();
 		}
 		

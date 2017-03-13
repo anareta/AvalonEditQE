@@ -178,20 +178,47 @@ namespace ICSharpCode.AvalonEdit
 
 		static void OnLineHeightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			TextEditor editor = d as TextEditor;
-			if (editor != null)
+            TextEditor editor = d as TextEditor;
+            if (editor != null)
 			{
 				editor.TextArea.TextView.LineHeight = (double)e.NewValue;
 			}
 		}
-		#endregion
-		/* Az Add End   */
+        #endregion
 
-		#region Options property
-		/// <summary>
-		/// Options property.
-		/// </summary>
-		public static readonly DependencyProperty OptionsProperty
+        #region ScrollingIncrement property
+        /// <summary>
+        /// ScrollingIncrement dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ScrollingIncrementProperty =
+            DependencyProperty.Register("ScrollingIncrement", typeof(double), typeof(TextEditor),
+                                        new FrameworkPropertyMetadata(double.NaN, OnScrollingIncrementChanged));
+
+        /// <summary>
+        /// Scrolling Increment of the Text Box
+        /// </summary>
+        public double ScrollingIncrement
+        {
+            get { return (double)GetValue(ScrollingIncrementProperty); }
+            set { SetValue(ScrollingIncrementProperty, value); }
+        }
+
+        static void OnScrollingIncrementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            TextEditor editor = d as TextEditor;
+            if (editor != null)
+            {
+                editor.TextArea.TextView.ScrollingIncrement = (double)e.NewValue;
+            }
+        }
+        #endregion
+        /* Az Add End   */
+
+        #region Options property
+        /// <summary>
+        /// Options property.
+        /// </summary>
+        public static readonly DependencyProperty OptionsProperty
 			= TextView.OptionsProperty.AddOwner(typeof(TextEditor), new FrameworkPropertyMetadata(OnOptionsChanged));
 		
 		/// <summary>
