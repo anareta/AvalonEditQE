@@ -123,23 +123,18 @@ namespace ICSharpCode.AvalonEdit
 		/// Occurs when the document property has changed.
 		/// </summary>
 		public event EventHandler DocumentChanged;
-		
-		/// <summary>
-		/// Raises the <see cref="DocumentChanged"/> event.
-		/// </summary>
-		protected virtual void OnDocumentChanged(EventArgs e)
-		{
-			if (DocumentChanged != null) {
-				DocumentChanged(this, e);
-			}
-		}
-		
+				
 		static void OnDocumentChanged(DependencyObject dp, DependencyPropertyChangedEventArgs e)
 		{
 			((TextEditor)dp).OnDocumentChanged((TextDocument)e.OldValue, (TextDocument)e.NewValue);
 		}
-		
-		void OnDocumentChanged(TextDocument oldValue, TextDocument newValue)
+
+        /// <summary>
+        /// Document Update
+        /// </summary>
+        /// <param name="oldValue"></param>
+        /// <param name="newValue"></param>
+        protected virtual void OnDocumentChanged(TextDocument oldValue, TextDocument newValue)
 		{
 			if (oldValue != null) {
 				TextDocumentWeakEventManager.TextChanged.RemoveListener(oldValue, this);
@@ -150,8 +145,13 @@ namespace ICSharpCode.AvalonEdit
 				TextDocumentWeakEventManager.TextChanged.AddListener(newValue, this);
 				PropertyChangedEventManager.AddListener(newValue.UndoStack, this, "IsOriginalFile");
 			}
-			OnDocumentChanged(EventArgs.Empty);
-			OnTextChanged(EventArgs.Empty);
+
+            if (DocumentChanged != null)
+            {
+                DocumentChanged(this, EventArgs.Empty);
+            }
+
+            OnTextChanged(EventArgs.Empty);
 		}
 		#endregion
 
