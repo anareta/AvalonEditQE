@@ -1213,7 +1213,9 @@ namespace ICSharpCode.AvalonEdit
 					line = document.LineCount;
 				
 				IScrollInfo scrollInfo = textView;
-				if (!scrollInfo.CanHorizontallyScroll) {
+                //if (!scrollInfo.CanHorizontallyScroll) {
+                // Az Add
+                {
 					// Word wrap is enabled. Ensure that we have up-to-date info about line height so that we scroll
 					// to the correct position.
 					// This avoids that the user has to repeat the ScrollTo() call several times when there are very long lines.
