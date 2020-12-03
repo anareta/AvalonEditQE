@@ -79,13 +79,13 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			string newlineText = "";
 			DocumentLine lastDocumentLine = VisualLine.LastDocumentLine;
 			if (lastDocumentLine.DelimiterLength == 2) {
-				newlineText = "¶";
+				newlineText = "\u21B5";
 			} else if (lastDocumentLine.DelimiterLength == 1) {
 				char newlineChar = Document.GetCharAt(lastDocumentLine.Offset + lastDocumentLine.Length);
 				if (newlineChar == '\r')
-					newlineText = "\\r";
+					newlineText = "\u2190";
 				else if (newlineChar == '\n')
-					newlineText = "\\n";
+					newlineText = "\u2193";
 				else
 					newlineText = "?";
 			}
